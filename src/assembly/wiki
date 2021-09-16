@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd $BIN_PATH
+java -jar -Dfile.encoding=UTF-8 ./wiki.jar "$@"

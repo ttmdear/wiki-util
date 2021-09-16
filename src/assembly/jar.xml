@@ -1,0 +1,21 @@
+<!-- src/assembly/jar.xml -->
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>exec</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <!-- Sekcja z zależnościami -->
+    <dependencySets>
+        <dependencySet>
+            <!-- Pobierane są wszystkie zaleności, które są następnie rozpakowywane -->
+            <outputDirectory>/</outputDirectory>
+            <!-- Rozpakowywany jest również główny pakiet -->
+            <useProjectArtifact>true</useProjectArtifact>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>
