@@ -95,15 +95,12 @@ public class WikiSubmitterImpl implements WikiSubmitter {
         List<Node> removedNodeList = new ArrayList<>();
 
         for (Node sourceNode : source.getAllNodeList()) {
-            if (sourceNode.getParentNode() == null) {
-                continue;
-            }
+            if (sourceNode.getParentNode() == null) continue;
+            if (sourceNode.isContent()) continue;
 
-            if (sourceNode.getType().equals(Node.Type.CONTENT)) {
-                continue;
-            }
+            Node targetNode = target.getNodeById(sourceNode.getId());
 
-            if (target.getNodeById(sourceNode.getId()) == null) {
+            if (targetNode == null || targetNode.isContent()) {
                 removedNodeList.add(sourceNode);
             }
         }
