@@ -127,11 +127,8 @@ public class WikiLoaderImpl implements WikiLoader {
                 List<FileLink> fileLinkList = parseFileLink(line);
 
                 if (!fileLinkList.isEmpty()) {
-                    if (node != null) {
-                        node.getFileLinkList().addAll(fileLinkList);
-                    } else {
-                        fileNode.getFileLinkList().addAll(fileLinkList);
-                    }
+                    if (node != null) node.getFileLinkList().addAll(fileLinkList);
+                    else fileNode.getFileLinkList().addAll(fileLinkList);
                 }
 
                 int level = -1;
@@ -146,7 +143,9 @@ public class WikiLoaderImpl implements WikiLoader {
                 if (level >= 0) {
                     if (node != null) {
                         if (contentNodeBuilder.length() > 0) {
-                            node.setContent(contentNodeBuilder.toString());
+                            String content = contentNodeBuilder.toString();
+                            node.setContent(content.substring(0, content.length() - 2));
+
                             contentNodeBuilder.delete(0, contentNodeBuilder.length());
                         }
                     }
