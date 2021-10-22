@@ -173,6 +173,8 @@ public class WikiLoaderImpl implements WikiLoader {
         if (node != null && contentNodeBuilder.length() > 0) {
             node.setContent(contentNodeBuilder.toString());
         }
+
+        reader.close();
     }
 
     private List<FileLink> parseFileLink(String line) {
