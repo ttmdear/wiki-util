@@ -246,7 +246,8 @@ public class WikiSubmitterImpl implements WikiSubmitter {
                     }
 
                     if (sourceChildNode.getContent() != null && !sourceChildNode.getContent().isEmpty()) {
-                        ContentUtil.appendLine(fileContent, sourceChildNode.getContent());
+                        fileContent.append(sourceChildNode.getContent());
+                        // ContentUtil.appendLine(fileContent, sourceChildNode.getContent());
                     }
                 }
             }
