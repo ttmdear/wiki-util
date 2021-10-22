@@ -230,10 +230,8 @@ public class WikiLoaderImpl implements WikiLoader {
         return fileLinkList;
     }
 
-    private void loadDirectory(File directoryFile, Node parentNode, Wiki wiki, String relativePath,
-            boolean isRootDirectory) throws IOException {
-        Node directoryNode = new Node(IDUtil.getNextIdString(), false, directoryFile.getName(), Node.Type.DIRECTORY, -1,
-                parentNode);
+    private void loadDirectory(File directoryFile, Node parentNode, Wiki wiki, String relativePath, boolean isRootDirectory) throws IOException {
+        Node directoryNode = new Node(IDUtil.getNextIdString(), false, directoryFile.getName(), Node.Type.DIRECTORY, -1, parentNode);
 
         if (!isRootDirectory) {
             relativePath = relativePath + "/" + directoryFile.getName();
@@ -256,10 +254,8 @@ public class WikiLoaderImpl implements WikiLoader {
                 if (fileExtension == null) continue;
 
                 if (fileExtension.equals("md")) {
-                    Node fileNode = new Node(IDUtil.getNextIdString(), false, file.getName(), Node.Type.FILE, -1,
-                            directoryNode);
+                    Node fileNode = new Node(IDUtil.getNextIdString(), false, file.getName(), Node.Type.FILE, -1, directoryNode);
                     wiki.addNode(fileNode, directoryNode);
-
                     loadContentNode(file, fileNode, wiki);
                 }
             }
