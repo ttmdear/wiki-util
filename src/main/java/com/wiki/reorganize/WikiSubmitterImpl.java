@@ -275,8 +275,7 @@ public class WikiSubmitterImpl implements WikiSubmitter {
                 FileUtils.deleteDirectory(file);
             } else {
                 if (file.exists()) {
-                    file.delete();
-                    //FileUtils.delete(file);
+                    FileUtils.delete(file);
                 }
             }
         }
