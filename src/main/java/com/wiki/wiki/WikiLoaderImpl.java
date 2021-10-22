@@ -143,9 +143,7 @@ public class WikiLoaderImpl implements WikiLoader {
                 if (level >= 0) {
                     if (node != null) {
                         if (contentNodeBuilder.length() > 0) {
-                            String content = contentNodeBuilder.toString();
-                            node.setContent(content.substring(0, content.length() - 2));
-
+                            node.setContent(contentNodeBuilder.toString());
                             contentNodeBuilder.delete(0, contentNodeBuilder.length());
                         }
                     }
