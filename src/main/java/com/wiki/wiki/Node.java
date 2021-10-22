@@ -30,6 +30,18 @@ public class Node {
         this.level = level;
     }
 
+    public boolean isDirectory() {
+        return type != null && type.equals(Type.DIRECTORY);
+    }
+
+    public boolean isFile() {
+        return type != null && type.equals(Type.FILE);
+    }
+
+    public boolean isContent() {
+        return type != null && type.equals(Type.CONTENT);
+    }
+
     public enum Type {
         DIRECTORY, FILE, CONTENT
     }

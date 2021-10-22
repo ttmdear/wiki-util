@@ -232,19 +232,18 @@ public class WikiSubmitterImpl implements WikiSubmitter {
         Node sourceNode = wikiSource.getNodeById(targetNode.getId());
 
         String targetPath = wikiTarget.getPath(targetNode.getId());
-        // File targetFile = new File(wikiPath + targetPath);
         File targetFile = new File(wikiPath + targetPath);
 
         boolean updateContent = false;
 
-        if (targetNode.isNew()) {
-            //noinspection ResultOfMethodCallIgnored
+        if (targetNode.isFile() && sourceNode.isContent()) {
             targetFile.createNewFile();
-
+            updateContent = true;
+        } else if (targetNode.isNew()) {
+            targetFile.createNewFile();
             updateContent = true;
         } else if (!targetPath.equals(sourcePath)) {
-            Files.move(Path.of(wikiPath + sourcePath), Path.of(wikiPath + targetPath),
-                    StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Path.of(wikiPath + sourcePath), Path.of(wikiPath + targetPath), StandardCopyOption.REPLACE_EXISTING);
         }
 
         if (!updateContent && isDifference(sourceNode, targetNode)) {
