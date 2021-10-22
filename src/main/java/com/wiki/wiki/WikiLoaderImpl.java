@@ -151,8 +151,7 @@ public class WikiLoaderImpl implements WikiLoader {
                         }
                     }
 
-                    node = new Node(IDUtil.getNextIdString(), false, line.substring(level + 2), Node.Type.CONTENT,
-                            level, fileNode);
+                    node = new Node(IDUtil.getNextIdString(), false, line.substring(level + 2), Node.Type.CONTENT, level, fileNode);
 
                     wiki.addNode(node, fileNode);
                     continue;
