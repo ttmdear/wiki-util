@@ -24,7 +24,7 @@ public class Configuration {
         //     WIKI_PATH = "/home/thinkpad/projects/2107 - Wiki/wiki/src/test/resources/wiki";
         // }
         if (getComputerName().equals("DESKTOP-U2H7PAJ")) {
-            WIKI_PATH = "C:\\home\\tmp\\2107 - Wiki\\wiki\\src\\test\\resources\\wiki";
+            WIKI_PATH = "C:\\home\\tmp\\wiki-util\\src\\test\\resources\\wiki";
             // WIKI_PATH = "C:\\home\\wiki";
         } else {
             WIKI_PATH = "/home/thinkpad/wiki";
