@@ -115,11 +115,7 @@ public class WikiSubmitterImpl implements WikiSubmitter {
     public void submit(String wikiPath, Wiki sourceWiki, Wiki targetWiki) throws IOException {
         Node targetWikiRootNode = targetWiki.getRootNode();
 
-        Objects.requireNonNull(targetWikiRootNode, "Target root node is required.");
-
-        if (targetWikiRootNode.getChildren().isEmpty()) {
-            return;
-        }
+        if (targetWikiRootNode.getChildren().isEmpty()) return;
 
         submitFileLink(wikiPath, sourceWiki, targetWiki);
 
@@ -191,46 +187,28 @@ public class WikiSubmitterImpl implements WikiSubmitter {
         return splited[splited.length - 1];
     }
 
-    private boolean isInFiles(File file, File files) {
-        return file.getParentFile().equals(files);
-    }
+    private void submitDirectory(Node targetNode, String wikiPath, Wiki source, Wiki target) throws IOException {
+        String sourcePath = source.getPath(targetNode.getId());
+        String targetPath = target.getPath(targetNode.getId());
 
-    private String relativePath(String relativeTo, String path) {
-        String relative = new File(relativeTo).toURI().relativize(new File(path).toURI()).getPath();
-
-        return relative;
-    }
-
-    private void submitDirectory(Node directoryNode, String wikiPath, Wiki source, Wiki target) throws
-            IOException {
-
-        String sourcePath = source.getPath(directoryNode.getId());
-        String targetPath = target.getPath(directoryNode.getId());
-
-        if (directoryNode.isNew()) {
+        if (targetNode.isNew()) {
             new File(wikiPath + targetPath).mkdirs();
         } else {
-
             if (!sourcePath.equals(targetPath)) {
                 Files.move(Path.of(wikiPath + sourcePath), Path.of(wikiPath + targetPath));
             }
         }
 
-        if (directoryNode.getChildren().isEmpty()) return;
+        if (targetNode.getChildren().isEmpty()) return;
 
-        for (Node child : directoryNode.getChildren()) {
-            if (child.getType().equals(Node.Type.DIRECTORY)) {
-                submitDirectory(child, wikiPath, source, target);
-            } else if (child.getType().equals(Node.Type.FILE)) {
-                submitFile(child, wikiPath, source, target);
-            }
+        for (Node child : targetNode.getChildren()) {
+            submitNode(child, wikiPath, source, target);
         }
     }
 
     private void submitFile(Node targetNode, String wikiPath, Wiki wikiSource, Wiki wikiTarget) throws IOException {
         String sourcePath = wikiSource.getPath(targetNode.getId());
         Node sourceNode = wikiSource.getNodeById(targetNode.getId());
-
         String targetPath = wikiTarget.getPath(targetNode.getId());
         File targetFile = new File(wikiPath + targetPath);
 
@@ -261,15 +239,13 @@ public class WikiSubmitterImpl implements WikiSubmitter {
 
         if (!targetNode.getChildren().isEmpty()) {
             for (Node targetChild : targetNode.getChildren()) {
-                ContentUtil.appendLine(fileContent, LEVEL_MD_HEADER.get(targetChild.getLevel()), " ",
-                        targetChild.getName());
+                ContentUtil.appendLine(fileContent, LEVEL_MD_HEADER.get(targetChild.getLevel()), " ", targetChild.getName());
 
                 if (!targetChild.isNew()) {
                     Node sourceChildNode = wikiSource.getNodeById(targetChild.getId());
 
                     if (sourceChildNode == null) {
-                        throw new RuntimeException(
-                                format("Node [%s] isn't new but has node in source.", targetChild.getId()));
+                        throw new RuntimeException(format("Node [%s] isn't new but has node in source.", targetChild.getId()));
                     }
 
                     if (sourceChildNode.getContent() != null && !sourceChildNode.getContent().isEmpty()) {
@@ -283,9 +259,9 @@ public class WikiSubmitterImpl implements WikiSubmitter {
     }
 
     private void submitNode(Node node, String wikiPath, Wiki source, Wiki target) throws IOException {
-        if (node.getType().equals(Node.Type.FILE)) {
+        if (node.isFile()) {
             submitFile(node, wikiPath, source, target);
-        } else if (node.getType().equals(Node.Type.DIRECTORY)) {
+        } else if (node.isDirectory()) {
             submitDirectory(node, wikiPath, source, target);
         }
     }
