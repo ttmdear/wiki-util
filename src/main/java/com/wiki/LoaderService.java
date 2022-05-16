@@ -4,18 +4,44 @@ import com.wiki.domain.*;
 import com.wiki.util.MatchUtil;
 
 import java.io.*;
+import java.io.File;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LoaderService {
     private static final String INDEX_REGEX = "\\[\\/\\/\\]: \\\"(.*)\\\"";
 
-    public Wiki load(File directory) throws IOException {
-         return new Wiki(loadDirectory(directory));
+    public Wiki load(File root) throws IOException {
+        Location location = Location.of("/" + root.getName());
+
+        return new Wiki(loadDirectory(root, location), loadFiles(root, location));
     }
 
-    private Container loadDirectory(File directory) throws IOException {
+    private List<com.wiki.domain.File> loadFiles(File directory, Location location) {
+        List<File> files = prepareFiles(directory);
+
+        if (files.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Optional<File> filesOpt = files.stream()
+            .filter(file -> file.isDirectory() && file.getName().equals(".files"))
+            .findFirst();
+
+        if (!filesOpt.isPresent()) {
+            return new ArrayList<>();
+        }
+
+        List<com.wiki.domain.File> result = new ArrayList<>();
+        Location filesLoc = location.locationTo(".files");
+
+        for (File fileFs : prepareFiles(filesOpt.get())) {
+            result.add(new com.wiki.domain.File(ID.nextId(), fileFs.getName(), filesLoc.locationTo(fileFs.getName())));
+        }
+
+        return result;
+    }
+
+    private Container loadDirectory(File directory, Location location) throws IOException {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(String.format("File %s doesn't directory", directory.getPath()));
         }
@@ -25,16 +51,16 @@ public class LoaderService {
 
         for (File file : prepareFiles(directory)) {
             if (file.isDirectory()) {
-                containers.add(loadDirectory(file));
+                containers.add(loadDirectory(file, location.locationTo(file.getName())));
             } else if (isMarkdownFile(file)) {
-                documents.add(loadDocument(file));
+                documents.add(loadDocument(file, location.locationTo(file.getName())));
             }
         }
 
-        return new Container(ID.nextId(), directory.getName(), containers, documents);
+        return new Container(ID.nextId(), directory.getName(), containers, documents, location);
     }
 
-    private Document loadDocument(File file) throws IOException {
+    private Document loadDocument(File file, Location location) throws IOException {
         InputStream input = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
@@ -95,7 +121,7 @@ public class LoaderService {
 
         reader.close();
 
-        return new Document(id, name, content, contents);
+        return new Document(id, name, content, contents, location);
     }
 
     private Content prepareContent(ID id, Head head, Index index, String content) {

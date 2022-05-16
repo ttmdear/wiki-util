@@ -1,9 +1,13 @@
 package com.wiki.domain;
 
-public class Wiki {
-    private Container container;
+import java.util.List;
 
-    public Wiki(Container container) {
+public class Wiki {
+    private final Container container;
+    private final List<File> files;
+
+    public Wiki(Container container, List<File> files) {
         this.container = container;
+        this.files = files;
     }
 }

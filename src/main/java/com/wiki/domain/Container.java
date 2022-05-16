@@ -7,11 +7,13 @@ public class Container {
     private String name;
     private List<Container> containers;
     private List<Document> documents;
+    private Location location;
 
-    public Container(ID id, String name, List<Container> containers, List<Document> documents) {
+    public Container(ID id, String name, List<Container> containers, List<Document> documents, Location location) {
         this.id = id;
         this.name = name;
         this.containers = containers;
         this.documents = documents;
+        this.location = location;
     }
 }
