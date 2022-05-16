@@ -1,6 +1,6 @@
 package com.wiki.validation;
 
-import com.wiki.wiki.Wiki;
+import com.wiki.model.domain.Wiki;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.wiki.util;
 
-import com.wiki.domain.ImageRef;
+import com.wiki.model.domain.ImageRef;
 
 import java.util.ArrayList;
 import java.util.List;
