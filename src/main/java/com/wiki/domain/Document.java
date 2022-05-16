@@ -1,5 +1,6 @@
 package com.wiki.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Document {
@@ -15,5 +16,25 @@ public class Document {
         this.content = content;
         this.contents = contents;
         this.location = location;
+    }
+
+    public ID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Content getContent() {
+        return content;
+    }
+
+    public List<Content> getContents() {
+        return Collections.unmodifiableList(contents);
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

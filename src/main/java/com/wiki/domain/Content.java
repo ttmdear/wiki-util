@@ -1,5 +1,6 @@
 package com.wiki.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Content {
@@ -17,5 +18,29 @@ public class Content {
         this.content = content;
         this.images = image;
         this.links = link;
+    }
+
+    public ID getId() {
+        return id;
+    }
+
+    public Head getHead() {
+        return head;
+    }
+
+    public Index getIndex() {
+        return index;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public List<ImageRef> getImages() {
+        return Collections.unmodifiableList(images);
+    }
+
+    public List<LinkRef> getLinks() {
+        return Collections.unmodifiableList(links);
     }
 }

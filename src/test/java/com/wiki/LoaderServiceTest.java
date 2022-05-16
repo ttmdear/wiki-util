@@ -1,5 +1,6 @@
 package com.wiki;
 
+import com.wiki.domain.Location;
 import com.wiki.domain.Wiki;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,18 @@ class LoaderServiceTest {
     @Test
     void load() throws URISyntaxException, IOException {
         Wiki wiki = loaderService.load(getFileFromResource("wiki"));
-        System.out.printf("wiki");
+
+        assertNotNull(wiki.getContainer());
+        assertEquals(3, wiki.getFiles().size());
+        assertEquals("wiki", wiki.getContainer().getName());
+        assertEquals(1, wiki.getContainer().getContainers().size());
+        assertEquals(1, wiki.getContainer().getDocuments().size());
+        assertEquals(Location.of("/wiki"), wiki.getContainer().getLocation());
+
+        assertEquals("Programowanie.md", wiki.getContainer().getDocuments().get(0).getName());
+        assertEquals(3, wiki.getContainer().getDocuments().get(0).getContents().size());
+        assertNotNull(wiki.getContainer().getDocuments().get(0).getContent());
+        assertNotNull(wiki.getContainer().getDocuments().get(0).getLocation());
     }
 
     private File getFileFromResource(String fileName) throws URISyntaxException {

@@ -1,5 +1,6 @@
 package com.wiki.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Container {
@@ -15,5 +16,25 @@ public class Container {
         this.containers = containers;
         this.documents = documents;
         this.location = location;
+    }
+
+    public ID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Container> getContainers() {
+        return Collections.unmodifiableList(containers);
+    }
+
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(documents);
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }
