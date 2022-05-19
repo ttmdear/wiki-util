@@ -88,7 +88,7 @@ public class App {
     }
 
     private void search(SearchCommand command) {
-
+        System.out.printf("search -> " + command.getIndex() + "\n");
     }
 
     public void errOutput(String message) {

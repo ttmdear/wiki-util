@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.wiki.app.commands.Command;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
-import com.wiki.model.domain.Wiki;
 import org.apache.commons.cli.*;
 
 import java.util.Arrays;
@@ -26,46 +25,53 @@ public class CliLauncher {
         // create Options object
         Options options = new Options();
 
-        // options.addOption(new Option("c", "command"))
+        options.addOption(Option.builder("h")
+            .longOpt("help")
+            .build());
 
-        // add t option
-        for (Command command : commands) {
-            Option option = new Option(command.getCliName(), true, command.getCliDescription());
+        options.addOption(Option.builder("c")
+            .longOpt("command")
+            .hasArg()
+            .build());
 
-            option.setArgs(2);
-            option.setArgName("arg1");
-            option.setArgName("arg2");
+        options.addOption(Option.builder("i")
+            .longOpt("index")
+            .hasArg()
+            .build());
 
-            options.addOption(option);
-            // options.addOption(command.getCliName(), false, command.getCliDescription());
-        }
-
-        // search --format-html php-java-index
-
-        CommandLineParser parser = new WikiParser();
+        CommandLineParser parser = new DefaultParser();
 
         try {
             CommandLine cmd = parser.parse(options, args);
-            String[] argsCli = cmd.getArgs();
 
-            if (args.length == 0) {
-                return;
+            if (cmd.hasOption("help")) {
+                printHelp(options);
+            } else if (cmd.hasOption("command")) {
+                try {
+                    app.dispatch(prepareCommand(cmd));
+                } catch (IncorrectCommandException e) {
+                    System.err.println(e.getMessage());
+                }
+            } else {
+                printHelp(options);
             }
-
-            app.dispatch(resolveCommand(argsCli[0]));
         } catch (Exception e) {
             app.errOutput(e.getMessage());
         }
     }
 
-    public Command resolveCommand(String arg) {
-        if (arg == null || arg.isEmpty()) return null;
+    private void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("wiki", options);
+    }
 
-        String[] splitted = arg.split("-");
+    public Command prepareCommand(CommandLine cmd) {
+        String command = cmd.getOptionValue("command");
 
-        for (Command command : commands) {
-            if (command.getCliName().equals(splitted[0])) {
-                return command;
+        for (Command commandFor : commands) {
+            if (commandFor.getCliName().equals(command)) {
+                commandFor.load(cmd);
+                return commandFor;
             }
         }
 

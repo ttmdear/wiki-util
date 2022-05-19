@@ -1,5 +1,10 @@
 package com.wiki.app.commands;
 
+import org.apache.commons.cli.CommandLine;
+
 public abstract class BaseCommand implements Command {
-    public abstract String getCliName();
+    @Override
+    public void load(CommandLine cmd) {
+
+    }
 }
