@@ -2,7 +2,9 @@ package com.wiki.app;
 
 import com.google.inject.Inject;
 import com.wiki.app.commands.Command;
+import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
+import com.wiki.model.domain.Wiki;
 import org.apache.commons.cli.*;
 
 import java.util.Arrays;
@@ -11,7 +13,8 @@ import java.util.List;
 public class CliLauncher {
     private final App app;
     private final List<Command> commands = Arrays.asList(
-            new ValidateCommand()
+        new ValidateCommand(),
+        new SearchCommand()
     );
 
     @Inject
@@ -23,12 +26,23 @@ public class CliLauncher {
         // create Options object
         Options options = new Options();
 
+        // options.addOption(new Option("c", "command"))
+
         // add t option
         for (Command command : commands) {
-            options.addOption(command.getCliName(), false, command.getCliDescription());
+            Option option = new Option(command.getCliName(), true, command.getCliDescription());
+
+            option.setArgs(2);
+            option.setArgName("arg1");
+            option.setArgName("arg2");
+
+            options.addOption(option);
+            // options.addOption(command.getCliName(), false, command.getCliDescription());
         }
 
-        CommandLineParser parser = new DefaultParser();
+        // search --format-html php-java-index
+
+        CommandLineParser parser = new WikiParser();
 
         try {
             CommandLine cmd = parser.parse(options, args);
@@ -38,13 +52,13 @@ public class CliLauncher {
                 return;
             }
 
-            app.dispatch(resolveCommnad(argsCli[0]));
+            app.dispatch(resolveCommand(argsCli[0]));
         } catch (Exception e) {
             app.errOutput(e.getMessage());
         }
     }
 
-    public Command resolveCommnad(String arg) {
+    public Command resolveCommand(String arg) {
         if (arg == null || arg.isEmpty()) return null;
 
         String[] splitted = arg.split("-");
@@ -56,14 +70,18 @@ public class CliLauncher {
         }
 
         return null;
-        // if (splitted.length == 1) {
-        //     CommandName.valueOf(splitted[0].toUpperCase());
-        // }
+    }
 
-        // String upperUnderScore = Stream.of(splitted)
-        //         .map(String::toUpperCase)
-        //         .collect(Collectors.joining("_"));
+    public static class WikiParser implements CommandLineParser {
 
-        // return CommandName.valueOf(upperUnderScore);
+        @Override
+        public CommandLine parse(Options options, String[] strings) throws ParseException {
+            return null;
+        }
+
+        @Override
+        public CommandLine parse(Options options, String[] strings, boolean b) throws ParseException {
+            return null;
+        }
     }
 }

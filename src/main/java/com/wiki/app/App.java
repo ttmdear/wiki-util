@@ -3,6 +3,7 @@ package com.wiki.app;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.wiki.app.commands.Command;
+import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
 import com.wiki.model.domain.Wiki;
 import com.wiki.model.service.LoaderService;
@@ -79,9 +80,15 @@ public class App {
     public void dispatch(Command command) {
         if (command instanceof ValidateCommand) {
             validate((ValidateCommand) command);
+        } else if (command instanceof SearchCommand) {
+            search((SearchCommand) command);
         } else {
             errOutput("Unknown command");
         }
+    }
+
+    private void search(SearchCommand command) {
+
     }
 
     public void errOutput(String message) {
