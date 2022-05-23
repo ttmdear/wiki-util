@@ -1,5 +1,6 @@
 package com.wiki.model.service;
 
+import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.*;
 import com.wiki.util.MatchUtil;
 
@@ -8,12 +9,18 @@ import java.io.*;
 import java.io.File;
 import java.util.*;
 
-public class LoaderService {
+public class LoadService {
     private static final String INDEX_REGEX = "\\[\\/\\/\\]: \\\"(.*)\\\"";
 
-    @Inject
-    public LoaderService() {
+    private final ResolvePathService resolvePathService;
 
+    @Inject
+    public LoadService(ResolvePathService resolvePathService) {
+        this.resolvePathService = resolvePathService;
+    }
+
+    public Wiki load() throws IOException {
+        return load(new File(resolvePathService.resolveWikiPath()));
     }
 
     public Wiki load(File root) throws IOException {

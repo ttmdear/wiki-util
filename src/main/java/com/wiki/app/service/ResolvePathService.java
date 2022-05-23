@@ -1,6 +1,6 @@
-package com.wiki.app;
+package com.wiki.app.service;
 
-public class ResolveWikiPathService {
+public class ResolvePathService {
     public String resolveWikiPath() {
         String path = System.getenv("WIKI_PATH");
 

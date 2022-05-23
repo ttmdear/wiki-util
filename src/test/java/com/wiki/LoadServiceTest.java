@@ -1,31 +1,30 @@
 package com.wiki;
 
+import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Location;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.service.LoaderService;
+import com.wiki.model.service.LoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import static com.wiki.util.FileUtil.getFileFromResource;
 import static org.junit.jupiter.api.Assertions.*;
 
-class LoaderServiceTest {
+class LoadServiceTest {
 
-    private LoaderService loaderService;
+    private LoadService loadService;
 
     @BeforeEach
     void setUp() {
-        loaderService = new LoaderService();
+        loadService = new LoadService(new ResolvePathService());
     }
 
     @Test
     void load() throws URISyntaxException, IOException {
-        Wiki wiki = loaderService.load(getFileFromResource("wiki"));
+        Wiki wiki = loadService.load(getFileFromResource("wiki"));
 
         assertNotNull(wiki.getContainer());
         assertEquals(3, wiki.getFiles().size());
@@ -38,5 +37,12 @@ class LoaderServiceTest {
         assertEquals(3, wiki.getContainer().getDocuments().get(0).getContents().size());
         assertNotNull(wiki.getContainer().getDocuments().get(0).getContent());
         assertNotNull(wiki.getContainer().getDocuments().get(0).getLocation());
+    }
+
+    private static class ResolvePathService extends com.wiki.app.service.ResolvePathService {
+        @Override
+        public String resolveWikiPath() {
+            return super.resolveWikiPath();
+        }
     }
 }

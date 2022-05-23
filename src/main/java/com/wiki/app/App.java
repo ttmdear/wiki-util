@@ -5,21 +5,23 @@ import com.google.inject.Injector;
 import com.wiki.app.commands.Command;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
+import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.service.LoaderService;
+import com.wiki.model.service.LoadService;
 
 import java.io.File;
+import java.io.IOException;
 
 public class App {
     private final Injector injector;
-    private final ResolveWikiPathService resolveWikiPathService;
-    private final LoaderService loaderService;
+    private final ResolvePathService resolvePathService;
+    private final LoadService loadService;
 
     @Inject
-    public App(Injector injector, ResolveWikiPathService resolveWikiPathService, LoaderService loaderService) {
+    public App(Injector injector, ResolvePathService resolvePathService, LoadService loadService) {
         this.injector = injector;
-        this.resolveWikiPathService = resolveWikiPathService;
-        this.loaderService = loaderService;
+        this.resolvePathService = resolvePathService;
+        this.loadService = loadService;
     }
 
     // private static void printErrors(List<String> errors) {
@@ -68,10 +70,10 @@ public class App {
 
     public void validate(ValidateCommand validateCommand) {
         try {
-            String wikiPath = resolveWikiPathService.resolveWikiPath();
-            File root = new File(resolveWikiPathService.resolveWikiPath());
+            String wikiPath = resolvePathService.resolveWikiPath();
+            File root = new File(resolvePathService.resolveWikiPath());
 
-            Wiki wiki = loaderService.load(root);
+            Wiki wiki = loadService.load(root);
         } catch (Exception e) {
             errOutput(e);
         }
@@ -88,7 +90,11 @@ public class App {
     }
 
     private void search(SearchCommand command) {
-        System.out.printf("search -> " + command.getIndex() + "\n");
+        try {
+            loadService.load().search(command.getIndex());
+        } catch (IOException e) {
+            errOutput(e);
+        }
     }
 
     public void errOutput(String message) {

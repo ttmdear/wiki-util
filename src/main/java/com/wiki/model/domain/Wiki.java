@@ -66,6 +66,10 @@ public class Wiki {
         }
     }
 
+    public void search(String index) {
+        System.out.printf("search");
+    }
+
     private interface TravelConsumer {
         void onContainer(Container container, Container parent);
 
