@@ -16,6 +16,10 @@ public class Wiki {
         loadIndexes();
     }
 
+    public Map<Index, Content> getIndexes() {
+        return indexes;
+    }
+
     public Container getContainer() {
         return container;
     }

@@ -10,4 +10,8 @@ public class ResolvePathService {
 
         return path;
     }
+
+    public String resolveWikiCliPath() {
+        return String.format("%s/%s", resolveWikiPath(), "run.wiki-cli.sh");
+    }
 }

@@ -21,4 +21,9 @@ public class Index {
     public static Index of(Index a, Index b) {
         return of(a.key + "-" + b.key);
     }
+
+    @Override
+    public String toString() {
+        return key;
+    }
 }

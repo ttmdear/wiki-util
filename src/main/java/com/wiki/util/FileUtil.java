@@ -22,4 +22,18 @@ public class FileUtil {
             return new File(resource.toURI());
         }
     }
+
+    public static String getFilePathFromResource(String fileName) {
+        ClassLoader classLoader = FileUtil.class.getClassLoader();
+        URL resource = classLoader.getResource(fileName);
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        } else {
+            try {
+                return new File(resource.toURI()).getAbsolutePath();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

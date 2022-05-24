@@ -3,6 +3,7 @@ package com.wiki.app;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.wiki.app.commands.Command;
+import com.wiki.app.commands.ReloadCommand;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
 import com.wiki.app.service.ResolvePathService;
@@ -82,9 +83,15 @@ public class App {
             validate((ValidateCommand) command);
         } else if (command instanceof SearchCommand) {
             search((SearchCommand) command);
+        } else if (command instanceof ReloadCommand) {
+            reload((ReloadCommand) command);
         } else {
             errOutput("Unknown command");
         }
+    }
+
+    private void reload(ReloadCommand command) {
+
     }
 
     private void search(SearchCommand command) {
