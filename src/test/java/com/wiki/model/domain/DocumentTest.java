@@ -26,7 +26,7 @@ class DocumentTest {
         );
 
         Document document = new Document(ID.nextId(), "Test", Content.createEmpty(ID.nextId(), Index.of("java")), contents, Location.of("/"));
-        assertEquals(document.getContentIndex(contents.get(3)), "java-lvl1-lvl2-lvl3-lvl4");
+        assertEquals(document.getContentIndex(contents.get(3)), Index.of("java-lvl1-lvl2-lvl3-lvl4"));
     }
 
     @Test

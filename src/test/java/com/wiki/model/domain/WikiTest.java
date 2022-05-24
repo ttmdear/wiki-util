@@ -30,7 +30,7 @@ class WikiTest {
     @Test
     void search() throws URISyntaxException, IOException {
         Wiki wiki = loadService.load(getFileFromResource("wiki-java"));
-        assertNotNull(wiki.search("java-connect-ssh"));
+        assertNotNull(wiki.search("java-releases-connect-ssh"));
         assertNull(wiki.search("connect-ssh"));
     }
 

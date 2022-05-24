@@ -33,7 +33,8 @@ public class CliLauncher {
 
         options.addOption(Option.builder("c")
             .longOpt("command")
-            .hasArg()
+            .desc(prepareCommandDescription())
+            .hasArgs()
             .build());
 
         options.addOption(Option.builder("i")
@@ -60,6 +61,18 @@ public class CliLauncher {
         } catch (Exception e) {
             app.errOutput(e.getMessage());
         }
+    }
+
+    private String prepareCommandDescription() {
+        StringBuilder desc = new StringBuilder();
+
+        desc.append("Run specified command:\n");
+
+        for (Command command : commands) {
+            desc.append(command.getCliName()).append(" - ").append(command.getCliDescription()).append("\n");
+        }
+
+        return desc.toString();
     }
 
     private void printHelp(Options options) {
