@@ -135,6 +135,14 @@ public class LoadService {
             } else if (state.isContent() || state.isCode()) {
                 contents.add(prepareContent(ID.nextId(), head, index, contentBuilder.toString()));
             }
+        } else {
+            if (state.isBegin()) {
+                content = Content.createEmpty(ID.nextId());
+            } else if (head != null) {
+                contents.add(prepareContent(ID.nextId(), head, index, contentBuilder.toString()));
+            } else {
+                throw new LoadException("Strange case.");
+            }
         }
 
         reader.close();

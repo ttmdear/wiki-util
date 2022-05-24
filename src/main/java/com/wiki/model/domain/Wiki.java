@@ -96,19 +96,9 @@ public class Wiki {
 
             @Override
             public void onContent(Content content, Document document) {
-                Index index = null;
-
-                if (document.hasIndex() && content.hasIndex()) {
-                    index = Index.of(document.getIndex(), content.getIndex());
-                } else if (content.hasIndex()) {
-                    index = content.getIndex();
-                }
+                Index index = document.getContentIndex(content);
 
                 if (index != null) {
-                    if (indexes.containsKey(index)) {
-                        throw new LoadException(String.format("Index %s is duplicated", index));
-                    }
-
                     indexes.put(index, content);
                 }
             }

@@ -1,5 +1,6 @@
 package com.wiki.model.domain;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +19,14 @@ public class Content {
         this.content = content;
         this.images = image;
         this.links = link;
+    }
+
+    public static Content createEmpty(ID nextId) {
+        return new Content(nextId, Head.createEmpty(), null, null, new ArrayList<>(), new ArrayList<>());
+    }
+
+    public static Content createEmpty(ID nextId, Index index) {
+        return new Content(nextId, Head.createEmpty(), index, null, new ArrayList<>(), new ArrayList<>());
     }
 
     public ID getId() {

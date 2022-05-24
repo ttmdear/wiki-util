@@ -1,5 +1,8 @@
 package com.wiki.model.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +47,48 @@ public class Document {
         }
 
         return null;
+    }
+
+    public Index getContentIndex(Content content) {
+        List<String> elements = new ArrayList<>();
+
+        for (int i = 0; i < contents.size(); i++) {
+            Content contentFor = contents.get(i);
+            if (contentFor.equals(content)) {
+                appendIndex(elements, content);
+                short level = contentFor.getHead().getLevel();
+
+                for(int j=i-1; j>=0; j--) {
+                    Content contentFor2 = contents.get(j);
+
+                    if (contentFor2.getHead().getLevel() < level) {
+                        appendIndex(elements, contentFor2);
+                        level = contentFor2.getHead().getLevel();
+
+                        if (level == Head.MIN_LEVEL) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (elements.isEmpty()) {
+            return null;
+        }
+
+        if (hasIndex()) {
+            elements.add(getIndex().getKey());
+        }
+
+        Collections.reverse(elements);
+        return Index.of(StringUtils.join(elements, "-"));
+    }
+
+    private void appendIndex(List<String> elements, Content content) {
+        if (content.hasIndex()) {
+            elements.add(content.getIndex().getKey());
+        }
     }
 
     public boolean hasIndex() {
