@@ -1,11 +1,11 @@
 package com.wiki.app;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.wiki.app.commands.Command;
 import com.wiki.app.commands.ReloadCommand;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
+import com.wiki.app.service.ReloadService;
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Wiki;
 import com.wiki.model.service.LoadService;
@@ -16,11 +16,13 @@ import java.io.IOException;
 public class App {
     private final ResolvePathService resolvePathService;
     private final LoadService loadService;
+    private final ReloadService reloadService;
 
     @Inject
-    public App(ResolvePathService resolvePathService, LoadService loadService) {
+    public App(ResolvePathService resolvePathService, LoadService loadService, ReloadService reloadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
+        this.reloadService = reloadService;
     }
 
     // private static void printErrors(List<String> errors) {
@@ -91,7 +93,11 @@ public class App {
     }
 
     private void reload(ReloadCommand command) {
-
+        try {
+            reloadService.reload();
+        } catch (IOException e) {
+            errOutput(e);
+        }
     }
 
     private void search(SearchCommand command) {

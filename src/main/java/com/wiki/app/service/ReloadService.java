@@ -6,6 +6,7 @@ import com.wiki.model.domain.IndexEntry;
 import com.wiki.model.domain.Wiki;
 import com.wiki.model.service.LoadService;
 
+import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +17,7 @@ public class ReloadService {
     private final ResolvePathService resolvePathService;
     private final LoadService loadService;
 
+    @Inject
     public ReloadService(ResolvePathService resolvePathService, LoadService loadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wiki</groupId>
-    <artifactId>wiki</artifactId>
+    <artifactId>wiki-cli</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>wiki</name>
 
@@ -153,7 +153,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <copy file="${project.build.directory}/wiki-1.0-SNAPSHOT-exec.jar"
+                                <copy file="${project.build.directory}/wiki-cli-1.0-SNAPSHOT-exec.jar"
                                       toFile="${env.BIN_PATH}/wiki.jar"/>
                                 <copy file="${project.basedir}/src/assembly/wiki"
                                       toFile="${env.BIN_PATH}/wiki"/>

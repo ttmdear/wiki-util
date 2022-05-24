@@ -2,6 +2,7 @@ package com.wiki.app;
 
 import com.google.inject.Inject;
 import com.wiki.app.commands.Command;
+import com.wiki.app.commands.ReloadCommand;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
 import org.apache.commons.cli.*;
@@ -13,7 +14,8 @@ public class CliLauncher {
     private final App app;
     private final List<Command> commands = Arrays.asList(
         new ValidateCommand(),
-        new SearchCommand()
+        new SearchCommand(),
+        new ReloadCommand()
     );
 
     @Inject
