@@ -2,6 +2,7 @@ package com.wiki.model.service;
 
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.*;
+import com.wiki.model.exceptions.LoadException;
 import com.wiki.util.MatchUtil;
 
 import javax.inject.Inject;
@@ -10,7 +11,9 @@ import java.io.File;
 import java.util.*;
 
 public class LoadService {
-    private static final String INDEX_REGEX = "\\[\\/\\/\\]: \\\"(.*)\\\"";
+    private static final String INDEX_REGEX_A = "\\[\\/\\/\\]:#\\\"(.*)\\\"";
+    private static final String INDEX_REGEX_B = "\\[\\/\\/\\]:\\\"(.*)\\\"";
+    private static final String INDEX_REGEX_C = "\\[\\/\\/\\]:\\((.*?)\\)";
 
     private final ResolvePathService resolvePathService;
 
@@ -97,7 +100,7 @@ public class LoadService {
 
         while ((line = reader.readLine()) != null) {
             if (line.startsWith("```")) {
-                contentBuilder.append(line);
+                append(contentBuilder, line);
 
                 if (state.isCode()) {
                     state = statePrevCode;
@@ -106,7 +109,7 @@ public class LoadService {
                     state = State.CODE;
                 }
             } else if (state.isCode()) {
-                contentBuilder.append(line);
+                append(contentBuilder, line);
             } else if (isHeadLine(line)) {
                 if (state.isBegin()) {
                     content = prepareContent(ID.nextId(), head, index, contentBuilder.toString());
@@ -120,9 +123,9 @@ public class LoadService {
                 contentBuilder.delete(0, contentBuilder.length());
             } else if (isIndexLine(line)) {
                 index = parseIndexLine(line);
-                contentBuilder.append(line);
+                append(contentBuilder, line);
             } else {
-                contentBuilder.append(line);
+                append(contentBuilder, line);
             }
         }
 
@@ -137,6 +140,10 @@ public class LoadService {
         reader.close();
 
         return new Document(id, name, content, contents, location);
+    }
+
+    private void append(StringBuilder contentBuilder, String line) {
+        contentBuilder.append(line).append("\n");
     }
 
     private Content prepareContent(ID id, Head head, Index index, String content) {
@@ -215,7 +222,23 @@ public class LoadService {
     }
 
     private Index parseIndexLine(String line) {
-        return Index.of(MatchUtil.match(line, INDEX_REGEX));
+        line = line.replaceAll(" ", "");
+
+        String key = MatchUtil.match(line, INDEX_REGEX_A);
+
+        if (key == null) {
+            key = MatchUtil.match(line, INDEX_REGEX_B);
+        }
+
+        if (key == null) {
+            key = MatchUtil.match(line, INDEX_REGEX_C);
+        }
+
+        if (key == null) {
+            throw new LoadException(String.format("Incorrect index in line [%s]", line));
+        }
+
+        return Index.of(key);
     }
 
     private List<File> prepareFiles(File directory) {

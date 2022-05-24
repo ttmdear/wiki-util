@@ -13,13 +13,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class App {
-    private final Injector injector;
     private final ResolvePathService resolvePathService;
     private final LoadService loadService;
 
     @Inject
-    public App(Injector injector, ResolvePathService resolvePathService, LoadService loadService) {
-        this.injector = injector;
+    public App(ResolvePathService resolvePathService, LoadService loadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
     }

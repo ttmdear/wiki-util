@@ -17,4 +17,8 @@ public class Index {
     public static Index of(String key) {
         return INSTANCES.computeIfAbsent(key, Index::new);
     }
+
+    public static Index of(Index a, Index b) {
+        return of(a.key + "-" + b.key);
+    }
 }

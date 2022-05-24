@@ -39,10 +39,14 @@ public class Document {
     }
 
     public Index getIndex() {
-        if (content != null) {
+        if (hasIndex()) {
             return content.getIndex();
         }
 
         return null;
+    }
+
+    public boolean hasIndex() {
+        return content != null && content.hasIndex();
     }
 }

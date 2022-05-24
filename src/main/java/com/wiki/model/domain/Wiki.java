@@ -1,16 +1,19 @@
 package com.wiki.model.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.wiki.model.exceptions.LoadException;
+
+import java.util.*;
 
 public class Wiki {
     private final Container container;
     private final List<File> files;
+    private final Map<Index, Content> indexes = new HashMap<>();
 
     public Wiki(Container container, List<File> files) {
         this.container = container;
         this.files = files;
+
+        loadIndexes();
     }
 
     public Container getContainer() {
@@ -66,8 +69,46 @@ public class Wiki {
         }
     }
 
-    public void search(String index) {
-        System.out.printf("search");
+    public String search(String key) {
+        Index index = Index.of(key);
+        if (indexes.containsKey(index)) {
+            return indexes.get(index).getContent();
+        } else {
+            return null;
+        }
+    }
+
+    private void loadIndexes() {
+        travel(new TravelConsumer() {
+            @Override
+            public void onContainer(Container container, Container parent) {
+
+            }
+
+            @Override
+            public void onDocument(Document document, Container container) {
+
+            }
+
+            @Override
+            public void onContent(Content content, Document document) {
+                Index index = null;
+
+                if (document.hasIndex() && content.hasIndex()) {
+                    index = Index.of(document.getIndex(), content.getIndex());
+                } else if (content.hasIndex()) {
+                    index = content.getIndex();
+                }
+
+                if (index != null) {
+                    if (indexes.containsKey(index)) {
+                        throw new LoadException(String.format("Index %s is duplicated", index));
+                    }
+
+                    indexes.put(index, content);
+                }
+            }
+        });
     }
 
     private interface TravelConsumer {

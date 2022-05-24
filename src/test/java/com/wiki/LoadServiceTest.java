@@ -29,7 +29,6 @@ class LoadServiceTest {
         assertNotNull(wiki.getContainer());
         assertEquals(3, wiki.getFiles().size());
         assertEquals("wiki", wiki.getContainer().getName());
-        assertEquals(1, wiki.getContainer().getContainers().size());
         assertEquals(1, wiki.getContainer().getDocuments().size());
         assertEquals(Location.of("/wiki"), wiki.getContainer().getLocation());
 
@@ -37,24 +36,6 @@ class LoadServiceTest {
         assertEquals(3, wiki.getContainer().getDocuments().get(0).getContents().size());
         assertNotNull(wiki.getContainer().getDocuments().get(0).getContent());
         assertNotNull(wiki.getContainer().getDocuments().get(0).getLocation());
-    }
-
-    @Test
-    void loadJava() throws URISyntaxException, IOException {
-        Wiki wiki = loadService.load(getFileFromResource("wiki-java"));
-
-        System.out.printf("wiki");
-        // assertNotNull(wiki.getContainer());
-        // assertEquals(3, wiki.getFiles().size());
-        // assertEquals("wiki", wiki.getContainer().getName());
-        // assertEquals(1, wiki.getContainer().getContainers().size());
-        // assertEquals(1, wiki.getContainer().getDocuments().size());
-        // assertEquals(Location.of("/wiki"), wiki.getContainer().getLocation());
-
-        // assertEquals("Programowanie.md", wiki.getContainer().getDocuments().get(0).getName());
-        // assertEquals(3, wiki.getContainer().getDocuments().get(0).getContents().size());
-        // assertNotNull(wiki.getContainer().getDocuments().get(0).getContent());
-        // assertNotNull(wiki.getContainer().getDocuments().get(0).getLocation());
     }
 
     private static class ResolvePathService extends com.wiki.app.service.ResolvePathService {
