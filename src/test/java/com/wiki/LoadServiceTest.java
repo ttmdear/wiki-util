@@ -23,6 +23,12 @@ class LoadServiceTest {
     }
 
     @Test
+    void loadTest() throws URISyntaxException, IOException {
+        Wiki wiki = loadService.load(getFileFromResource("wiki-test"));
+        System.out.printf(wiki.search("java-releases"));
+    }
+
+    @Test
     void load() throws URISyntaxException, IOException {
         Wiki wiki = loadService.load(getFileFromResource("wiki"));
 

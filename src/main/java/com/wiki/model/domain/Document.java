@@ -50,6 +50,10 @@ public class Document {
     }
 
     public Index getContentIndex(Content content) {
+        if (!content.hasIndex()) {
+            return null;
+        }
+
         List<String> elements = new ArrayList<>();
 
         for (int i = 0; i < contents.size(); i++) {
