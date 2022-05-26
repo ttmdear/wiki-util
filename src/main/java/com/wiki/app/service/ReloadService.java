@@ -37,8 +37,8 @@ public class ReloadService {
         content.append("#!/bin/bash\n");
         content.append("\n");
 
-        for (Map.Entry<Index, Content> entry : wiki.getIndexes().entrySet()) {
-            content.append(String.format("alias wiki-%s=\"wiki -c search -i %s\";\n", entry.getKey(), entry.getKey()));
+        for (Index index : wiki.getIndexes()) {
+            content.append(String.format("alias wiki-%s=\"wiki -c search -i %s\";\n", index, index));
         }
 
         return content.toString();

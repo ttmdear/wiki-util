@@ -89,10 +89,50 @@ public class Document {
         return Index.of(StringUtils.join(elements, "-"));
     }
 
+    public String getContent(Content content) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < contents.size(); i++) {
+            Content contentFor = contents.get(i);
+
+            if (contentFor != content) {
+                continue;
+            }
+
+            append(result, contentFor.getContent());
+
+            short level = contentFor.getHead().getLevel();
+
+            for(int j = i + 1; j < contents.size(); j++) {
+                Content contentFor2 = contents.get(j);
+
+                if (contentFor2.getHead().getLevel() == level) {
+                    break;
+                }
+
+                append(result, contentFor2.getContent());
+            }
+        }
+
+        return result.toString();
+    }
+
     private void appendIndex(List<String> elements, Content content) {
         if (content.hasIndex()) {
             elements.add(content.getIndex().getKey());
         }
+    }
+
+    private void append(StringBuilder builder, String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+
+        if (builder.length() > 0) {
+            builder.append("\n");
+        }
+
+        builder.append(text);
     }
 
     public boolean hasIndex() {

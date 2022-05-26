@@ -25,12 +25,6 @@ class WikiTest {
     }
 
     @Test
-    void getIndexEntries() throws URISyntaxException, IOException {
-        Wiki wiki = loadService.load(getFileFromResource("wiki-index"));
-        assertEquals(8, wiki.getIndexEntries().size());
-    }
-
-    @Test
     void search() throws URISyntaxException, IOException {
         Wiki wiki = loadService.load(getFileFromResource("wiki-java"));
         assertNotNull(wiki.search("java-releases-connect-ssh"));

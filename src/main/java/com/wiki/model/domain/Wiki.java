@@ -7,7 +7,7 @@ import java.util.*;
 public class Wiki {
     private final Container container;
     private final List<File> files;
-    private final Map<Index, Content> indexes = new HashMap<>();
+    private final Map<Index, IndexEntry> indexes = new HashMap<>();
 
     public Wiki(Container container, List<File> files) {
         this.container = container;
@@ -16,8 +16,8 @@ public class Wiki {
         loadIndexes();
     }
 
-    public Map<Index, Content> getIndexes() {
-        return indexes;
+    public List<Index> getIndexes() {
+        return new ArrayList<>(indexes.keySet());
     }
 
     public Container getContainer() {
@@ -26,31 +26,6 @@ public class Wiki {
 
     public List<File> getFiles() {
         return Collections.unmodifiableList(files);
-    }
-
-    public List<IndexEntry> getIndexEntries() {
-        List<IndexEntry> indexEntries = new ArrayList<>();
-
-        travel(new TravelConsumer() {
-            @Override
-            public void onContainer(Container container, Container parent) {
-
-            }
-
-            @Override
-            public void onDocument(Document document, Container container) {
-
-            }
-
-            @Override
-            public void onContent(Content content, Document document) {
-                if (content.hasIndex()) {
-                    indexEntries.add(IndexEntry.of(content.getIndex(), document.getIndex(), content));
-                }
-            }
-        });
-
-        return indexEntries;
     }
 
     public void travel(TravelConsumer travelConsumer) {
@@ -76,7 +51,8 @@ public class Wiki {
     public String search(String key) {
         Index index = Index.of(key);
         if (indexes.containsKey(index)) {
-            return indexes.get(index).getContent();
+            IndexEntry entry = indexes.get(index);
+            return entry.document.getContent(entry.content);
         } else {
             return null;
         }
@@ -99,7 +75,7 @@ public class Wiki {
                 Index index = document.getContentIndex(content);
 
                 if (index != null) {
-                    indexes.put(index, content);
+                    indexes.put(index, new IndexEntry(document, content));
                 }
             }
         });
@@ -111,5 +87,15 @@ public class Wiki {
         void onDocument(Document document, Container container);
 
         void onContent(Content content, Document document);
+    }
+
+    private static class IndexEntry {
+        Document document;
+        Content content;
+
+        public IndexEntry(Document document, Content content) {
+            this.document = document;
+            this.content = content;
+        }
     }
 }

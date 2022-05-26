@@ -121,6 +121,7 @@ public class LoadService {
                 head = resolveHeadLine(line);
                 index = null;
                 contentBuilder.delete(0, contentBuilder.length());
+                contentBuilder.append(line);
             } else if (isIndexLine(line)) {
                 index = parseIndexLine(line);
                 append(contentBuilder, line);
