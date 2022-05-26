@@ -121,7 +121,7 @@ public class LoadService {
                 head = resolveHeadLine(line);
                 index = null;
                 contentBuilder.delete(0, contentBuilder.length());
-                contentBuilder.append(line);
+                append(contentBuilder, line);
             } else if (isIndexLine(line)) {
                 index = parseIndexLine(line);
                 append(contentBuilder, line);
@@ -152,7 +152,15 @@ public class LoadService {
     }
 
     private void append(StringBuilder contentBuilder, String line) {
-        contentBuilder.append(line).append("\n");
+        if (line == null || line.isEmpty()) {
+            return;
+        }
+
+        if (contentBuilder.length() > 0) {
+            contentBuilder.append("\n");
+        }
+
+        contentBuilder.append(line);
     }
 
     private Content prepareContent(ID id, Head head, Index index, String content) {
