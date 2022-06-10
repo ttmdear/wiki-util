@@ -57,6 +57,7 @@ class WikiTest {
         Wiki.ValidateError errors = wiki.validate();
 
         assertEquals(2, errors.getRefs().size());
+        assertEquals(2, errors.getUnassigned().size());
     }
 
     private static class ResolvePathService extends com.wiki.app.service.ResolvePathService {

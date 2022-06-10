@@ -4,7 +4,6 @@ import com.wiki.app.service.ResolvePathService;
 import lombok.Getter;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,6 +91,8 @@ public class Wiki {
 
     public ValidateError validate() {
         List<String> refs = new ArrayList<>();
+        List<String> unassigned = new ArrayList<>();
+        List<Path> paths = new ArrayList<>();
 
         travel(new TravelConsumer() {
             @Override
@@ -105,19 +106,46 @@ public class Wiki {
             @Override
             public void onContent(Content content, Document document) {
                 validateRefs(document, content, refs);
+                collectLinks(content, paths);
             }
         });
 
-        return new ValidateError(refs);
+        validateUnassigned(paths, unassigned);
+
+        return new ValidateError(refs, unassigned);
+    }
+
+    private void validateUnassigned(List<Path> paths, List<String> unassigned) {
+        for (File file : files) {
+            boolean found = false;
+            for (Path path : paths) {
+                if (path.getName().equals(file.getLocation().getName())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                unassigned.add(file.getLocation().getName());
+            }
+        }
+    }
+
+    private void collectLinks(Content content, List<Path> paths) {
+        if (content.hasImages()) {
+            for (ImageRef image : content.getImages()) {
+                paths.add(image.getPath());
+            }
+        }
     }
 
     private void validateRefs(Document document, Content content, List<String> refs) {
         String parent = document.getLocation().getFileParentPath();
         if (content.hasImages()) {
             for (ImageRef image : content.getImages()) {
-                if (image.getLink().isFile()) {
-                    if (!Files.exists(Path.of(resolvePathService.resolveWikiPath() + parent + "/" + image.getLink()))) {
-                        refs.add(image.getLink().toString());
+                if (image.getPath().isFile()) {
+                    if (!Files.exists(java.nio.file.Path.of(resolvePathService.resolveWikiPath() + parent + "/" + image.getPath()))) {
+                        refs.add(image.getPath().toString());
                     }
                 }
             }
@@ -145,9 +173,11 @@ public class Wiki {
     @Getter
     public static class ValidateError {
         private final List<String> refs;
+        private final List<String> unassigned;
 
-        public ValidateError(List<String> refs) {
+        public ValidateError(List<String> refs, List<String> unassigned) {
             this.refs = refs;
+            this.unassigned = unassigned;
         }
 
         public boolean hasErrors() {

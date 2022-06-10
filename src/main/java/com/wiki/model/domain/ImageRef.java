@@ -6,19 +6,19 @@ import java.util.HashMap;
 
 @Value
 public class ImageRef {
-    private static final HashMap<Link, ImageRef> INSTANCES = new HashMap<>();
+    private static final HashMap<Path, ImageRef> INSTANCES = new HashMap<>();
 
-    Link link;
+    Path path;
 
-    private ImageRef(Link link) {
-        this.link = link;
+    private ImageRef(Path path) {
+        this.path = path;
     }
 
-    public static ImageRef of(Link link) {
-        return INSTANCES.computeIfAbsent(link, ImageRef::new);
+    public static ImageRef of(Path path) {
+        return INSTANCES.computeIfAbsent(path, ImageRef::new);
     }
 
     public static ImageRef of(String link) {
-        return INSTANCES.computeIfAbsent(Link.of(link), ImageRef::new);
+        return INSTANCES.computeIfAbsent(Path.of(link), ImageRef::new);
     }
 }

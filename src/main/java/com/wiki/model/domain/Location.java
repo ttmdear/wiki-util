@@ -8,31 +8,24 @@ import java.util.HashMap;
 
 @Value
 public class Location {
-    private static final HashMap<String, Location> INSTANCES = new HashMap<>();
+    private static final HashMap<Path, Location> INSTANCES = new HashMap<>();
 
-    String link;
+    Path path;
 
-    private Location(String link) {
-        this.link = link;
+    private Location(Path path) {
+        this.path = path;
     }
 
     public static Location of(String path) {
-        return INSTANCES.computeIfAbsent(path, Location::new);
+        return INSTANCES.computeIfAbsent(Path.of(path), Location::new);
     }
 
     public Location locationTo(String name) {
-        return Location.of(link + "/" + name);
+        return Location.of(path + "/" + name);
     }
 
     public boolean isPointMarkdown() {
-        if (link == null || link.isEmpty()) {
-            return false;
-        }
-
-        String[] split = link.split("/");
-        split = split[split.length - 1].split("\\.");
-
-        if (split[split.length - 1].equals("md")) {
+        if (path.getName().endsWith("md")) {
             return true;
         } else {
             return false;
@@ -40,17 +33,10 @@ public class Location {
     }
 
     public String getFileParentPath() {
-        if (link == null || link.isEmpty()) {
-            return null;
-        }
+        return path.getParentPath();
+    }
 
-        String[] split = link.split("/");
-        split = Arrays.copyOfRange(split, 1, split.length - 1);
-
-        if (split.length == 0) {
-            return "";
-        } else {
-            return "/" + StringUtils.join(split, "/");
-        }
+    public String getName() {
+        return path.getName();
     }
 }

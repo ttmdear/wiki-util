@@ -17,4 +17,9 @@ class LocationTest {
         assertEquals("", Location.of("/AVR").getFileParentPath());
         assertEquals("/Programming/AVR", Location.of("/Programming/AVR/GAME").getFileParentPath());
     }
+
+    @Test
+    void getName() {
+        assertEquals("test.md", Location.of("/AVR/Programming/test.md").getName());
+    }
 }

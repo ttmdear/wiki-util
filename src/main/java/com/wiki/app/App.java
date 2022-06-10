@@ -48,6 +48,13 @@ public class App {
                 System.out.printf("\n" + ref);
             }
         }
+
+        if (!errors.getUnassigned().isEmpty()) {
+            System.out.printf("\nThere are unused files:");
+            for (String unused : errors.getUnassigned()) {
+                System.out.printf(String.format("\nrm %s;", unused));
+            }
+        }
     }
 
     public void dispatch(Command command) {
