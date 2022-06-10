@@ -43,18 +43,20 @@ public class App {
 
     private void errOutput(Wiki.ValidateError errors) {
         if (!errors.getRefs().isEmpty()) {
-            System.out.printf("\nThere are incorrect path:");
+            System.out.print("\nThere are incorrect path:");
             for (String ref : errors.getRefs()) {
-                System.out.printf("\n" + ref);
+                System.out.print("\n" + ref);
             }
         }
 
         if (!errors.getUnassigned().isEmpty()) {
-            System.out.printf("\nThere are unused files:");
+            System.out.print("\nThere are unused files:");
             for (String unused : errors.getUnassigned()) {
-                System.out.printf(String.format("\nrm %s;", unused));
+                System.out.print(String.format("\nrm \"%s\";", unused));
             }
         }
+
+        System.out.print("\n");
     }
 
     public void dispatch(Command command) {
