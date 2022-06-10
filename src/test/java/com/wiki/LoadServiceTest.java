@@ -36,7 +36,7 @@ class LoadServiceTest {
         assertEquals(3, wiki.getFiles().size());
         assertEquals("wiki", wiki.getContainer().getName());
         assertEquals(1, wiki.getContainer().getDocuments().size());
-        assertEquals(Location.of("/wiki"), wiki.getContainer().getLocation());
+        assertEquals(Location.of(""), wiki.getContainer().getLocation());
 
         assertEquals("Programowanie.md", wiki.getContainer().getDocuments().get(0).getName());
         assertEquals(3, wiki.getContainer().getDocuments().get(0).getContents().size());

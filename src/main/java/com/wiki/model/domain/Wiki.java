@@ -100,7 +100,6 @@ public class Wiki {
 
             @Override
             public void onDocument(Document document, Container container) {
-                validateRefs(document, document.getContent(), refs);
             }
 
             @Override
