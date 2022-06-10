@@ -1,6 +1,7 @@
 package com.wiki.model.domain;
 
 import com.wiki.model.service.LoadService;
+import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +46,17 @@ class WikiTest {
         Document document = new Document(ID.nextId(), "Test", Content.createEmpty(ID.nextId()), contents, Location.of("/"));
         Container container = new Container(ID.nextId(), "test", Collections.emptyList(), Arrays.asList(document), Location.of("/"));
 
-        Wiki wiki = new Wiki(container, Collections.emptyList());
+        Wiki wiki = new Wiki(container, Collections.emptyList(), new ResolvePathService());
 
         assertEquals("content 6", wiki.search("lvl1-lvl2b-lvl5-lvl6"));
+    }
+
+    @Test
+    void validate() throws URISyntaxException, IOException {
+        Wiki wiki = loadService.load(getFileFromResource("wiki-validate"));
+        Wiki.ValidateError errors = wiki.validate();
+
+        assertEquals(2, errors.getRefs().size());
     }
 
     private static class ResolvePathService extends com.wiki.app.service.ResolvePathService {

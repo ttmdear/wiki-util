@@ -27,9 +27,9 @@ public class LoadService {
     }
 
     public Wiki load(File root) throws IOException {
-        Location location = Location.of("/" + root.getName());
+        Location location = Location.of("");
 
-        return new Wiki(loadDirectory(root, location), loadFiles(root, location));
+        return new Wiki(loadDirectory(root, location), loadFiles(root, location), resolvePathService);
     }
 
     private List<com.wiki.model.domain.File> loadFiles(File directory, Location location) {

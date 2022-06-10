@@ -1,5 +1,10 @@
 package com.wiki.model.domain;
 
+import com.wiki.app.service.ResolvePathService;
+import lombok.Getter;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,10 +15,12 @@ public class Wiki {
     private final Container container;
     private final List<File> files;
     private final Map<Index, IndexEntry> indexes = new HashMap<>();
+    private final ResolvePathService resolvePathService;
 
-    public Wiki(Container container, List<File> files) {
+    public Wiki(Container container, List<File> files, ResolvePathService resolvePathService) {
         this.container = container;
         this.files = files;
+        this.resolvePathService = resolvePathService;
 
         loadIndexes();
     }
@@ -83,6 +90,41 @@ public class Wiki {
         });
     }
 
+    public ValidateError validate() {
+        List<String> refs = new ArrayList<>();
+
+        travel(new TravelConsumer() {
+            @Override
+            public void onContainer(Container container, Container parent) {
+            }
+
+            @Override
+            public void onDocument(Document document, Container container) {
+                validateRefs(document, document.getContent(), refs);
+            }
+
+            @Override
+            public void onContent(Content content, Document document) {
+                validateRefs(document, content, refs);
+            }
+        });
+
+        return new ValidateError(refs);
+    }
+
+    private void validateRefs(Document document, Content content, List<String> refs) {
+        String parent = document.getLocation().getFileParentPath();
+        if (content.hasImages()) {
+            for (ImageRef image : content.getImages()) {
+                if (image.getLink().isFile()) {
+                    if (!Files.exists(Path.of(resolvePathService.resolveWikiPath() + parent + "/" + image.getLink()))) {
+                        refs.add(image.getLink().toString());
+                    }
+                }
+            }
+        }
+    }
+
     private interface TravelConsumer {
         void onContainer(Container container, Container parent);
 
@@ -98,6 +140,19 @@ public class Wiki {
         public IndexEntry(Document document, Content content) {
             this.document = document;
             this.content = content;
+        }
+    }
+
+    @Getter
+    public static class ValidateError {
+        private final List<String> refs;
+
+        public ValidateError(List<String> refs) {
+            this.refs = refs;
+        }
+
+        public boolean hasErrors() {
+            return !refs.isEmpty();
         }
     }
 }

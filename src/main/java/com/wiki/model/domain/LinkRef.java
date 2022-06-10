@@ -6,15 +6,19 @@ import java.util.HashMap;
 
 @Value
 public class LinkRef {
-    private static final HashMap<String, LinkRef> INSTANCES = new HashMap<>();
+    private static final HashMap<Link, LinkRef> INSTANCES = new HashMap<>();
 
-    String link;
+    Link link;
 
-    private LinkRef(String link) {
+    private LinkRef(Link link) {
         this.link = link;
     }
 
-    public static LinkRef of(String link) {
+    public static LinkRef of(Link link) {
         return INSTANCES.computeIfAbsent(link, LinkRef::new);
+    }
+
+    public static LinkRef of(String link) {
+        return INSTANCES.computeIfAbsent(Link.of(link), LinkRef::new);
     }
 }

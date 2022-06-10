@@ -56,4 +56,12 @@ public class Content {
     public boolean hasIndex() {
         return index != null;
     }
+
+    public boolean hasLinks() {
+        return !links.isEmpty();
+    }
+
+    public boolean hasImages() {
+        return !images.isEmpty();
+    }
 }

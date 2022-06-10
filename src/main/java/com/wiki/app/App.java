@@ -27,12 +27,26 @@ public class App {
 
     public void validate(ValidateCommand validateCommand) {
         try {
-            String wikiPath = resolvePathService.resolveWikiPath();
             File root = new File(resolvePathService.resolveWikiPath());
 
             Wiki wiki = loadService.load(root);
+            Wiki.ValidateError errors = wiki.validate();
+
+            if (errors.hasErrors()) {
+                errOutput(errors);
+            }
+
         } catch (Exception e) {
             errOutput(e);
+        }
+    }
+
+    private void errOutput(Wiki.ValidateError errors) {
+        if (!errors.getRefs().isEmpty()) {
+            System.out.printf("\nThere are incorrect path:");
+            for (String ref : errors.getRefs()) {
+                System.out.printf("\n" + ref);
+            }
         }
     }
 
