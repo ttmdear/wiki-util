@@ -1,8 +1,6 @@
 package com.wiki.model.domain;
 
-import com.wiki.model.service.LoadService;
-import lombok.val;
-import org.junit.jupiter.api.Assertions;
+import com.wiki.app.service.impl.SingleLoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class WikiTest {
 
-    private LoadService loadService;
+    private SingleLoadService loadService;
 
     @BeforeEach
     void setUp() {
-        loadService = new LoadService(new ResolvePathService());
+        loadService = new SingleLoadService(new ResolvePathService());
     }
 
     @Test

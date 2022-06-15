@@ -5,6 +5,7 @@ import com.wiki.app.commands.Command;
 import com.wiki.app.commands.ReloadCommand;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
+import com.wiki.app.exceptions.IncorrectCommandException;
 import org.apache.commons.cli.*;
 
 import java.util.Arrays;

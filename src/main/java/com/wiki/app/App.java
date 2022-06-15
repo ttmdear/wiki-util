@@ -8,18 +8,18 @@ import com.wiki.app.commands.ValidateCommand;
 import com.wiki.app.service.ReloadService;
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.service.LoadService;
+import com.wiki.app.service.impl.SingleLoadService;
 
 import java.io.File;
 import java.io.IOException;
 
 public class App {
     private final ResolvePathService resolvePathService;
-    private final LoadService loadService;
+    private final SingleLoadService loadService;
     private final ReloadService reloadService;
 
     @Inject
-    public App(ResolvePathService resolvePathService, LoadService loadService, ReloadService reloadService) {
+    public App(ResolvePathService resolvePathService, SingleLoadService loadService, ReloadService reloadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
         this.reloadService = reloadService;

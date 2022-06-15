@@ -1,16 +1,16 @@
 package com.wiki.app.service;
 
+import com.wiki.app.service.impl.SingleLoadService;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.service.LoadService;
 
 import java.io.File;
 import java.io.IOException;
 
 public class SearchService {
     private final ResolvePathService resolvePathService;
-    private final LoadService loadService;
+    private final SingleLoadService loadService;
 
-    public SearchService(ResolvePathService resolvePathService, LoadService loadService) {
+    public SearchService(ResolvePathService resolvePathService, SingleLoadService loadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
     }

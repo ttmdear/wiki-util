@@ -1,6 +1,6 @@
 package com.wiki.app.commands;
 
-import com.wiki.app.IncorrectCommandException;
+import com.wiki.app.exceptions.IncorrectCommandException;
 import org.apache.commons.cli.CommandLine;
 
 public class SearchCommand extends BaseCommand {

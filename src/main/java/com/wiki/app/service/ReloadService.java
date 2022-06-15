@@ -1,24 +1,21 @@
 package com.wiki.app.service;
 
-import com.wiki.model.domain.Content;
+import com.wiki.app.service.impl.SingleLoadService;
 import com.wiki.model.domain.Index;
-import com.wiki.model.domain.IndexEntry;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.service.LoadService;
 
 import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
 public class ReloadService {
     private final ResolvePathService resolvePathService;
-    private final LoadService loadService;
+    private final SingleLoadService loadService;
 
     @Inject
-    public ReloadService(ResolvePathService resolvePathService, LoadService loadService) {
+    public ReloadService(ResolvePathService resolvePathService, SingleLoadService loadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
     }
