@@ -1,5 +1,7 @@
 package com.wiki.app.service.impl;
 
+import com.wiki.app.service.LoadDocumentService;
+import com.wiki.app.service.LoadService;
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Container;
 import com.wiki.model.domain.Content;
@@ -15,12 +17,8 @@ import com.wiki.model.exceptions.LoadException;
 import com.wiki.util.MatchUtil;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,16 +26,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class SingleLoadService implements com.wiki.app.service.LoadService {
+public class SingleLoadService implements LoadService {
     private static final String INDEX_REGEX_A = "\\[\\/\\/\\]:#\\\"(.*)\\\"";
     private static final String INDEX_REGEX_B = "\\[\\/\\/\\]:\\\"(.*)\\\"";
     private static final String INDEX_REGEX_C = "\\[\\/\\/\\]:\\((.*?)\\)";
 
     private final ResolvePathService resolvePathService;
+    private final LoadDocumentService loadDocumentService;
 
     @Inject
-    public SingleLoadService(ResolvePathService resolvePathService) {
+    public SingleLoadService(ResolvePathService resolvePathService, LoadDocumentService loadDocumentService) {
         this.resolvePathService = resolvePathService;
+        this.loadDocumentService = loadDocumentService;
     }
 
     private static boolean isHidden(File file) {
@@ -116,76 +116,9 @@ public class SingleLoadService implements com.wiki.app.service.LoadService {
     }
 
     private Document loadDocument(File file, Location location) throws IOException {
-        InputStream input = new FileInputStream(file);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-        StringBuilder contentBuilder = new StringBuilder();
-
-        // 0 - the first part of file
-        // 1 - the contents file part
-        // 2 - code
-        ID id = ID.nextId();
-        String name = file.getName();
-        Content content = null;
-        List<Content> contents = new ArrayList<>();
-        State state = State.BEGIN;
-        State statePrevCode = null;
-        Head head = null;
-        Index index = null;
-
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith("```")) {
-                append(contentBuilder, line);
-
-                if (state.isCode()) {
-                    state = statePrevCode;
-                } else {
-                    statePrevCode = state;
-                    state = State.CODE;
-                }
-            } else if (state.isCode()) {
-                append(contentBuilder, line);
-            } else if (isHeadLine(line)) {
-                if (state.isBegin()) {
-                    content = prepareContent(ID.nextId(), head, index, contentBuilder.toString());
-                    state = State.CONTENT;
-                } else if (state.isContent()) {
-                    contents.add(prepareContent(ID.nextId(), head, index, contentBuilder.toString()));
-                }
-
-                head = resolveHeadLine(line);
-                index = null;
-                contentBuilder.delete(0, contentBuilder.length());
-                append(contentBuilder, line);
-            } else if (isIndexLine(line)) {
-                index = parseIndexLine(line);
-                append(contentBuilder, line);
-            } else {
-                append(contentBuilder, line);
-            }
-        }
-
-        if (contentBuilder.length() > 0) {
-            if (state.isBegin()) {
-                content = prepareContent(ID.nextId(), head, index, contentBuilder.toString());
-            } else if (state.isContent() || state.isCode()) {
-                contents.add(prepareContent(ID.nextId(), head, index, contentBuilder.toString()));
-            }
-        } else {
-            if (state.isBegin()) {
-                content = Content.createEmpty(ID.nextId());
-            } else if (head != null) {
-                contents.add(prepareContent(ID.nextId(), head, index, contentBuilder.toString()));
-            } else {
-                throw new LoadException("Strange case.");
-            }
-        }
-
-        reader.close();
-
-        return new Document(id, name, content, contents, location);
+        Document document = new Document(ID.nextId(), location);
+        loadDocumentService.load(document, file);
+        return document;
     }
 
     private void append(StringBuilder contentBuilder, String line) {

@@ -5,10 +5,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Value
 public class Path {
-    private static final HashMap<String, Path> INSTANCES = new HashMap<>();
+    private static final ConcurrentHashMap<String, Path> INSTANCES = new ConcurrentHashMap<>();
 
     String value;
 

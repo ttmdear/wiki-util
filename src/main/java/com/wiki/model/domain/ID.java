@@ -3,10 +3,11 @@ package com.wiki.model.domain;
 import lombok.Value;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Value
 public class ID {
-    private static final HashMap<Integer, ID> INSTANCES = new HashMap<>();
+    private static final ConcurrentHashMap<Integer, ID> INSTANCES = new ConcurrentHashMap<>();
     private static Integer SEQ = 0;
     Integer value;
 

@@ -17,7 +17,7 @@ class ReloadServiceTest {
     @BeforeEach
     void setUp() {
         resolvePathService = Mockito.mock(ResolvePathService.class);
-        loadService = new SingleLoadService(resolvePathService);
+        loadService = new SingleLoadService(resolvePathService, loadDocumentService);
         reloadService = new ReloadService(resolvePathService, loadService);
     }
 

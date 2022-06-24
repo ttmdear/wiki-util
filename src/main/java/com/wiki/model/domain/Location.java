@@ -5,10 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Value
 public class Location {
-    private static final HashMap<Path, Location> INSTANCES = new HashMap<>();
+    private static final ConcurrentHashMap<Path, Location> INSTANCES = new ConcurrentHashMap<>();
+    public static final Location ROOT = Location.of("");
 
     Path path;
 

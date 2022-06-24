@@ -3,10 +3,11 @@ package com.wiki.model.domain;
 import lombok.Value;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Value
 public class LinkRef {
-    private static final HashMap<Path, LinkRef> INSTANCES = new HashMap<>();
+    private static final ConcurrentHashMap<Path, LinkRef> INSTANCES = new ConcurrentHashMap<>();
 
     Path path;
 

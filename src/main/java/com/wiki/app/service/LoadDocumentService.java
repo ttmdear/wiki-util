@@ -1,7 +1,5 @@
-package com.wiki.app.service.impl;
+package com.wiki.app.service;
 
-import com.wiki.app.service.ResolvePathService;
-import com.wiki.model.domain.Container;
 import com.wiki.model.domain.Content;
 import com.wiki.model.domain.Document;
 import com.wiki.model.domain.Head;
@@ -10,11 +8,9 @@ import com.wiki.model.domain.ImageRef;
 import com.wiki.model.domain.Index;
 import com.wiki.model.domain.LinkRef;
 import com.wiki.model.domain.Location;
-import com.wiki.model.domain.Wiki;
 import com.wiki.model.exceptions.LoadException;
 import com.wiki.util.MatchUtil;
 
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,98 +22,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
-public abstract class LoadBaseService implements com.wiki.app.service.LoadService {
+public class LoadDocumentService {
     private static final String INDEX_REGEX_A = "\\[\\/\\/\\]:#\\\"(.*)\\\"";
     private static final String INDEX_REGEX_B = "\\[\\/\\/\\]:\\\"(.*)\\\"";
     private static final String INDEX_REGEX_C = "\\[\\/\\/\\]:\\((.*?)\\)";
 
-    private final ResolvePathService resolvePathService;
-
-    @Inject
-    public LoadBaseService(ResolvePathService resolvePathService) {
-        this.resolvePathService = resolvePathService;
-    }
-
-    private static boolean isHidden(File file) {
-        return file.getName().startsWith(".");
-    }
-
-    private static boolean isMarkdownFile(File file) {
-        if (file == null) {
-            return false;
-        }
-
-        String[] splited = file.getName().split("\\.");
-
-        if (splited.length == 0) {
-            return false;
-        }
-
-        return splited[splited.length - 1].equals("md");
-    }
-
-    @Override
-    public Wiki load() throws IOException {
-        return load(new File(resolvePathService.resolveWikiPath()));
-    }
-
-    public Wiki load(File root) throws IOException {
-        Location location = Location.of("");
-
-        return new Wiki(loadDirectory(root, location), loadFiles(root, location), resolvePathService);
-    }
-
-    private List<com.wiki.model.domain.File> loadFiles(File directory, Location location) {
-        List<File> files = prepareFiles(directory);
-
-        if (files.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        Optional<File> filesOpt = files.stream()
-            .filter(file -> file.isDirectory() && file.getName().equals(".files"))
-            .findFirst();
-
-        if (!filesOpt.isPresent()) {
-            return new ArrayList<>();
-        }
-
-        List<com.wiki.model.domain.File> result = new ArrayList<>();
-        Location filesLoc = location.locationTo(".files");
-
-        for (File fileFs : prepareFiles(filesOpt.get())) {
-            result.add(new com.wiki.model.domain.File(ID.nextId(), fileFs.getName(), filesLoc.locationTo(fileFs.getName())));
-        }
-
-        return result;
-    }
-
-    private Container loadDirectory(File directory, Location location) throws IOException {
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException(String.format("File %s doesn't directory", directory.getPath()));
-        }
-
-        List<Container> containers = new ArrayList<>();
-        List<Document> documents = new ArrayList<>();
-
-        for (File file : prepareFiles(directory)) {
-            if (isHidden(file)) {
-                // continue
-            } else if (file.isDirectory()) {
-                containers.add(loadDirectory(file, location.locationTo(file.getName())));
-            } else if (isMarkdownFile(file)) {
-                documents.add(loadDocument(file, location.locationTo(file.getName())));
-            }
-        }
-
-        return new Container(ID.nextId(), directory.getName(), containers, documents, location);
-    }
-
-    private Document loadDocument(File file, Location location) throws IOException {
+    public void load(Document document, File file) throws IOException {
         InputStream input = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
@@ -126,7 +37,6 @@ public abstract class LoadBaseService implements com.wiki.app.service.LoadServic
         // 0 - the first part of file
         // 1 - the contents file part
         // 2 - code
-        ID id = ID.nextId();
         String name = file.getName();
         Content content = null;
         List<Content> contents = new ArrayList<>();
@@ -187,7 +97,7 @@ public abstract class LoadBaseService implements com.wiki.app.service.LoadServic
 
         reader.close();
 
-        return new Document(id, name, content, contents, location);
+        document.load(name, content, contents);
     }
 
     private void append(StringBuilder contentBuilder, String line) {

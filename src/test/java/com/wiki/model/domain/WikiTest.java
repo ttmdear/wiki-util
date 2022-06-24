@@ -20,7 +20,7 @@ class WikiTest {
 
     @BeforeEach
     void setUp() {
-        loadService = new SingleLoadService(new ResolvePathService());
+        loadService = new SingleLoadService(new ResolvePathService(), loadDocumentService);
     }
 
     @Test

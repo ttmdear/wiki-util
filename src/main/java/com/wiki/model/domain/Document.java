@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class Document {
     private ID id;
@@ -13,12 +14,23 @@ public class Document {
     private List<Content> contents;
     private Location location;
 
+    public Document(ID id, Location location) {
+        this.id = id;
+        this.location = location;
+    }
+
     public Document(ID id, String name, Content content, List<Content> contents, Location location) {
         this.id = id;
         this.name = name;
         this.content = content;
         this.contents = contents;
         this.location = location;
+    }
+
+    public void load(String name, Content content, List<Content> contents) {
+        this.name = name;
+        this.content = content;
+        this.contents = contents;
     }
 
     public ID getId() {
