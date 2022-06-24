@@ -5,21 +5,22 @@ import com.wiki.app.commands.Command;
 import com.wiki.app.commands.ReloadCommand;
 import com.wiki.app.commands.SearchCommand;
 import com.wiki.app.commands.ValidateCommand;
+import com.wiki.app.service.LoadService;
 import com.wiki.app.service.ReloadService;
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Wiki;
-import com.wiki.app.service.impl.SingleLoadService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class App {
     private final ResolvePathService resolvePathService;
-    private final SingleLoadService loadService;
+    private final LoadService loadService;
     private final ReloadService reloadService;
 
     @Inject
-    public App(ResolvePathService resolvePathService, SingleLoadService loadService, ReloadService reloadService) {
+    public App(ResolvePathService resolvePathService, LoadService loadService, ReloadService reloadService) {
         this.resolvePathService = resolvePathService;
         this.loadService = loadService;
         this.reloadService = reloadService;
@@ -27,15 +28,12 @@ public class App {
 
     public void validate(ValidateCommand validateCommand) {
         try {
-            File root = new File(resolvePathService.resolveWikiPath());
-
-            Wiki wiki = loadService.load(root);
+            Wiki wiki = loadService.load();
             Wiki.ValidateError errors = wiki.validate();
 
             if (errors.hasErrors()) {
                 errOutput(errors);
             }
-
         } catch (Exception e) {
             errOutput(e);
         }
@@ -82,7 +80,7 @@ public class App {
     private void search(SearchCommand command) {
         try {
             stdOutput(loadService.load().search(command.getIndex()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             errOutput(e);
         }
     }

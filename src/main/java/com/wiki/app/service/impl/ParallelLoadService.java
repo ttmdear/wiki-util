@@ -66,6 +66,7 @@ public class ParallelLoadService implements LoadService {
 
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).get();
 
+        executor.shutdown();
         return new Wiki(container, loadFiles(root, location), resolvePathService);
     }
 
