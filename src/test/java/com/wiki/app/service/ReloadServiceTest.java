@@ -13,10 +13,12 @@ class ReloadServiceTest {
     private ResolvePathService resolvePathService;
     private SingleLoadService loadService;
     private ReloadService reloadService;
+    private LoadDocumentService loadDocumentService;
 
     @BeforeEach
     void setUp() {
         resolvePathService = Mockito.mock(ResolvePathService.class);
+        loadDocumentService = new LoadDocumentService();
         loadService = new SingleLoadService(resolvePathService, loadDocumentService);
         reloadService = new ReloadService(resolvePathService, loadService);
     }

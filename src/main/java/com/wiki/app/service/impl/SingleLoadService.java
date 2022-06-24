@@ -4,17 +4,10 @@ import com.wiki.app.service.LoadDocumentService;
 import com.wiki.app.service.LoadService;
 import com.wiki.app.service.ResolvePathService;
 import com.wiki.model.domain.Container;
-import com.wiki.model.domain.Content;
 import com.wiki.model.domain.Document;
-import com.wiki.model.domain.Head;
 import com.wiki.model.domain.ID;
-import com.wiki.model.domain.ImageRef;
-import com.wiki.model.domain.Index;
-import com.wiki.model.domain.LinkRef;
 import com.wiki.model.domain.Location;
 import com.wiki.model.domain.Wiki;
-import com.wiki.model.exceptions.LoadException;
-import com.wiki.util.MatchUtil;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -27,10 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class SingleLoadService implements LoadService {
-    private static final String INDEX_REGEX_A = "\\[\\/\\/\\]:#\\\"(.*)\\\"";
-    private static final String INDEX_REGEX_B = "\\[\\/\\/\\]:\\\"(.*)\\\"";
-    private static final String INDEX_REGEX_C = "\\[\\/\\/\\]:\\((.*?)\\)";
-
     private final ResolvePathService resolvePathService;
     private final LoadDocumentService loadDocumentService;
 
@@ -121,111 +110,6 @@ public class SingleLoadService implements LoadService {
         return document;
     }
 
-    private void append(StringBuilder contentBuilder, String line) {
-        if (line == null || line.isEmpty()) {
-            return;
-        }
-
-        if (contentBuilder.length() > 0) {
-            contentBuilder.append("\n");
-        }
-
-        contentBuilder.append(line);
-    }
-
-    private Content prepareContent(ID id, Head head, Index index, String content) {
-        List<ImageRef> imageRefs = parseImageRef(content);
-        List<LinkRef> linkRefs = parseLinkRef(content);
-
-        return new Content(id, head, index, content, imageRefs, linkRefs);
-    }
-
-    private List<LinkRef> parseLinkRef(String content) {
-        List<LinkRef> result = new ArrayList<>();
-
-        parseLinkRefHTML(content, result);
-        parseLinkRefMarkdown(content, result);
-
-        return result;
-    }
-
-    private void parseLinkRefHTML(String content, List<LinkRef> result) {
-        for (String link : MatchUtil.matchAllIn(content, "<a.*?href=\\\".*?\\\">.*?<\\/a>", "href=\\\"(.*?)\\\"")) {
-            result.add(LinkRef.of(link));
-        }
-    }
-
-    private void parseLinkRefMarkdown(String content, List<LinkRef> result) {
-        for (String link : MatchUtil.matchAllIn(content, "[^!]\\[(.*?)\\]\\(.*?\\)", "\\((.*?)\\)")) {
-            result.add(LinkRef.of(link));
-        }
-    }
-
-    private List<ImageRef> parseImageRef(String content) {
-        List<ImageRef> result = new ArrayList<>();
-
-        parseImageRefHTML(content, result);
-        parseImageRefMarkdown(content, result);
-
-        return result;
-    }
-
-    private void parseImageRefHTML(String content, List<ImageRef> result) {
-        for (String link : MatchUtil.matchAllIn(content, "<img.*?\\/>", "src=\\\"(.*?)\\\"")) {
-            result.add(ImageRef.of(link));
-        }
-    }
-
-    private void parseImageRefMarkdown(String content, List<ImageRef> result) {
-        for (String link : MatchUtil.matchAllIn(content, "!\\[.*?]\\(.*?\\)", "\\((.*?)\\)")) {
-            result.add(ImageRef.of(link));
-        }
-    }
-
-    private Head resolveHeadLine(String line) {
-        if (line.startsWith("# ")) return new Head((short) 1, line.substring(2));
-        else if (line.startsWith("## ")) return new Head((short) 2, line.substring(3));
-        else if (line.startsWith("### ")) return new Head((short) 3, line.substring(4));
-        else if (line.startsWith("#### ")) return new Head((short) 4, line.substring(5));
-        else if (line.startsWith("##### ")) return new Head((short) 5, line.substring(6));
-        else if (line.startsWith("###### ")) return new Head((short) 6, line.substring(7));
-
-        throw new IllegalArgumentException("It's not head line.");
-    }
-
-    private boolean isHeadLine(String line) {
-        if (line.startsWith("# ")) return true;
-        else if (line.startsWith("## ")) return true;
-        else if (line.startsWith("### ")) return true;
-        else if (line.startsWith("#### ")) return true;
-        else if (line.startsWith("##### ")) return true;
-        else return line.startsWith("###### ");
-    }
-
-    private boolean isIndexLine(String line) {
-        return line.startsWith("[//]:");
-    }
-
-    private Index parseIndexLine(String line) {
-        line = line.replaceAll(" ", "");
-
-        String key = MatchUtil.match(line, INDEX_REGEX_A);
-
-        if (key == null) {
-            key = MatchUtil.match(line, INDEX_REGEX_B);
-        }
-
-        if (key == null) {
-            key = MatchUtil.match(line, INDEX_REGEX_C);
-        }
-
-        if (key == null) {
-            throw new LoadException(String.format("Incorrect index in line [%s]", line));
-        }
-
-        return Index.of(key);
-    }
-
     private List<File> prepareFiles(File directory) {
         File[] files = directory.listFiles();
 
@@ -237,21 +121,5 @@ public class SingleLoadService implements LoadService {
         fileList.sort(Comparator.comparing(File::getName));
 
         return fileList;
-    }
-
-    private enum State {
-        BEGIN, CODE, CONTENT;
-
-        boolean isBegin() {
-            return this.equals(BEGIN);
-        }
-
-        boolean isCode() {
-            return this.equals(CODE);
-        }
-
-        boolean isContent() {
-            return this.equals(CONTENT);
-        }
     }
 }

@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 public class ParallelLoadService implements LoadService {
     private final ResolvePathService resolvePathService;
     private final LoadDocumentService loadDocumentService;
-    private final ExecutorService executor = Executors.newFixedThreadPool(20);
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
     @Inject
     public ParallelLoadService(ResolvePathService resolvePathService, LoadDocumentService loadDocumentService) {
@@ -65,8 +65,6 @@ public class ParallelLoadService implements LoadService {
         Container container = loadDirectory(root, location, tasks);
 
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).get();
-
-        executor.shutdown();
 
         return new Wiki(container, loadFiles(root, location), resolvePathService);
     }
@@ -118,7 +116,6 @@ public class ParallelLoadService implements LoadService {
 
         tasks.add(CompletableFuture.runAsync(() -> {
             try {
-                System.out.println(String.format("load %s thread %s", file, Thread.currentThread().getId()));
                 loadDocumentService.load(document, file);
             } catch (IOException e) {
                 throw new RuntimeException(e);

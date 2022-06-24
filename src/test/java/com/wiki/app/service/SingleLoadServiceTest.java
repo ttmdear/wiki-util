@@ -15,9 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class SingleLoadServiceTest {
 
     SingleLoadService loadService;
+    LoadDocumentService loadDocumentService;
 
     @BeforeEach
     void setUp() {
+        loadDocumentService = new LoadDocumentService();
         loadService = new SingleLoadService(new ResolvePathService(), loadDocumentService);
     }
 

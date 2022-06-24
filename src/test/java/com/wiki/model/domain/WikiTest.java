@@ -1,5 +1,6 @@
 package com.wiki.model.domain;
 
+import com.wiki.app.service.LoadDocumentService;
 import com.wiki.app.service.impl.SingleLoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class WikiTest {
 
     private SingleLoadService loadService;
+    private LoadDocumentService loadDocumentService;
 
     @BeforeEach
     void setUp() {
+        loadDocumentService = new LoadDocumentService();
         loadService = new SingleLoadService(new ResolvePathService(), loadDocumentService);
     }
 
